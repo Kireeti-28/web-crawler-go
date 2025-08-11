@@ -16,13 +16,13 @@ func main() {
 		fmt.Println("too many arguments provided")
 		os.Exit(1)
 	}
-	baseUrl := os.Args[1]
-	fmt.Printf("starting crawl of: %s\n", baseUrl)
-	htmlBody, err := getHTML(baseUrl)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	rawBaseURL := os.Args[1]
+	fmt.Printf("starting crawl of: %s\n", rawBaseURL)
+	pages := make(map[string]int)
 
-	fmt.Println(htmlBody)
+	crawlPage(rawBaseURL, rawBaseURL, pages)
+
+	for normalizedURL, count := range pages {
+		fmt.Printf("%d - %s\n", count, normalizedURL)
+	}
 }
