@@ -17,12 +17,20 @@ func main() {
 		os.Exit(1)
 	}
 	rawBaseURL := os.Args[1]
+
+	cfg, err := newConfig(rawBaseURL, 3)
+	if err != nil {
+		fmt.Printf("error making configure %v\n", err)
+		return
+	}
+
 	fmt.Printf("starting crawl of: %s\n", rawBaseURL)
-	pages := make(map[string]int)
 
-	crawlPage(rawBaseURL, rawBaseURL, pages)
+	cfg.wg.Add(1)
+	go cfg.crawlPage(rawBaseURL)
+	cfg.wg.Wait()
 
-	for normalizedURL, count := range pages {
+	for normalizedURL, count := range cfg.pages {
 		fmt.Printf("%d - %s\n", count, normalizedURL)
 	}
 }
